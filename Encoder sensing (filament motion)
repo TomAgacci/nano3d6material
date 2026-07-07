@@ -1,0 +1,6 @@
+volatile long encoder_ticks = 0;
+float ticks_to_mm = 0.01f; // tune
+
+ISR(PCINT2_vect) {  // example, depends on pin
+    encoder_ticks++;
+}
