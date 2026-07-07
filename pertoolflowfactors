@@ -1,0 +1,2 @@
+float flow_factor[7] = {1,1,1,1,1,1,1};
+flow_factor[current_tool] = requested / measured;
