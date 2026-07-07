@@ -1,5 +1,7 @@
 License Under Creative Commons Attribution Open Source
 
+The seventh tool motor is for direct drive 6 color addition or single direct drive basic
+
 Nano‑Selector GRBL Firmware
 A 7‑Tool, Single‑Nozzle, Multi‑Material 3D Printer on an Arduino Nano (ATmega328P)
 With Selector Hardware, Closed‑Loop Extrusion, Flow‑Correction, and Marlin‑Compatible G‑Code
