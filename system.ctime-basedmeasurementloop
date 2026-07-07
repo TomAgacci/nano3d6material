@@ -1,0 +1,19 @@
+unsigned long e_start = 0;
+float measured_e = 0.0;
+float requested_e = 0.0;
+
+void begin_extrude() {
+    e_start = micros();
+}
+
+void end_extrude() {
+    unsigned long e_end = micros();
+    unsigned long dt = e_end - e_start;
+
+    // crude scale: duration → "mm extruded"
+    measured_e = (float)dt * 0.00001f;  // tune this constant
+
+    if (measured_e > 0.0f) {
+        flow_factor[current_tool] = requested_e / measured_e;
+    }
+}
