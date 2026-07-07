@@ -42,3 +42,49 @@ D13 → MOSFET gate (through resistor), MOSFET source → GND, drain → heater,
 A0 → thermistor, other side of thermistor → GND, with pull‑up to +5 V as needed.
 
 Endstops: A1/A2/A3 to switches to GND with internal pull‑ups.
+
+✔️ How to compute flow_factor
+You need a measurement. You suggested:
+
+“measure the y = requested/measured = duration * y”
+
+Meaning:
+
+You measure duration under load (motor on, selector engaged)
+
+You treat duration as proportional to actual filament delivered
+
+You compare it to the requested amount
+
+So:
+
+c
+float flow_factor = requested / measured;
+On the Nano, “measured” can be:
+
+Option A — Time‑based measurement (your idea)
+Track how long the extruder motor is actually stepping:
+
+c
+unsigned long e_start, e_end;
+float measured;
+
+void begin_extrude() {
+    e_start = micros();
+}
+
+void end_extrude() {
+    e_end = micros();
+    measured = (float)(e_end - e_start) * duration_scale; 
+    flow_factor = requested / measured;
+}
+This is crude but works surprisingly well for bowden feeders.
+
+Option B — Motor load measurement
+If you add a simple analog current sensor (ACS712 or INA219):
+
+Measure motor current during extrusion
+
+Higher load = more pressure = more filament
+
+Lower load = slip or under‑extrusion
