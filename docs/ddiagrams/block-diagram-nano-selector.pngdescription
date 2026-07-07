@@ -1,0 +1,10 @@
+[Diagram Description]
+
+A block diagram showing:
+- Slicer → G‑code → Nano
+- Nano → GRBL core → motion planner
+- Nano → selector logic → 74HC138 → extruder EN pins
+- Nano → shared STEP/DIR bus → all extruder drivers
+- Nano → heater MOSFET + thermistor
+- Nano → sensors (current + encoder)
+- CNC shields → motors
