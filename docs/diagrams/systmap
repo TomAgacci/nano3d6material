@@ -1,0 +1,17 @@
+sysmap {
+  system "Nano Selector Printer" {
+    component "Slicer" {role:input}
+    component "Nano MCU" {role:controller}
+    component "Selector 74HC138" {role:router}
+    component "CNC Shield 1" {role:driver}
+    component "CNC Shield 2" {role:driver_array}
+    component "Hotend" {role:actuator}
+    link "Slicer" -> "Nano MCU"
+    link "Nano MCU" -> "Selector 74HC138"
+    link "Nano MCU" -> "CNC Shield 1"
+    link "Nano MCU" -> "CNC Shield 2"
+    link "Selector 74HC138" -> "CNC Shield 1"
+    link "Selector 74HC138" -> "CNC Shield 2"
+    link "Nano MCU" -> "Hotend"
+  }
+}
