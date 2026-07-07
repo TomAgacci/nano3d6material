@@ -1,0 +1,42 @@
+// esp32_pcf_decoder.cpp
+#include <Arduino.h>
+
+String currentLine;
+bool inPayload = false;
+String payload;
+String diagramName;
+
+void setup() {
+  Serial.begin(115200);      // from Nano
+  Serial2.begin(115200);     // to PC or storage
+}
+
+void flush_diagram() {
+  if (diagramName.length() == 0 || payload.length() == 0) return;
+  Serial2.print("DIAGRAM ");
+  Serial2.println(diagramName);
+  Serial2.println(payload);
+  payload = "";
+  diagramName = "";
+}
+
+void loop() {
+  while (Serial.available()) {
+    char c = Serial.read();
+    if (c == '\n' || c == '\r') {
+      if (currentLine.startsWith("BEGIN_DIAGRAM")) {
+        diagramName = currentLine.substring(strlen("BEGIN_DIAGRAM "));
+      } else if (currentLine.startsWith("PAYLOAD_START")) {
+        inPayload = true;
+      } else if (currentLine.startsWith("PAYLOAD_END")) {
+        inPayload = false;
+        flush_diagram();
+      } else if (inPayload) {
+        payload += currentLine + "\n";
+      }
+      currentLine = "";
+    } else {
+      currentLine += c;
+    }
+  }
+}
