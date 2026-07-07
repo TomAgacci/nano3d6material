@@ -1,0 +1,4 @@
+[Diagram Description]
+
+Shows:
+STL → PrusaSlicer/Cura → G‑code (T/M/G) → Nano → selector → motors → print
