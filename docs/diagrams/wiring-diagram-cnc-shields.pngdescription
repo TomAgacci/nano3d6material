@@ -1,0 +1,12 @@
+[Diagram Description]
+
+Shows:
+- Nano pins D2–D13 and A0–A5
+- CNC Shield #1 (X/Y/Z + direct extruder)
+- CNC Shield #2 (bowden extruders)
+- Shared STEP/DIR lines
+- Selector decoder wiring
+- Heater MOSFET wiring
+- Thermistor wiring
+- Sensor wiring
+- Power rails (12–24 V, 5 V, GND)
