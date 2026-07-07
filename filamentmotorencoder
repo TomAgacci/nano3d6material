@@ -1,0 +1,11 @@
+volatile long encoder_ticks = 0;
+
+ISR(PCINT2_vect) {  // optical encoder interrupt
+    encoder_ticks++;
+}
+
+void end_extrude() {
+    measured_e = encoder_ticks * ticks_to_mm;
+    flow_factor[current_tool] = requested_e / measured_e;
+    encoder_ticks = 0;
+}
