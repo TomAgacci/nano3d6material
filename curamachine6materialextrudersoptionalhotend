@@ -1,0 +1,17 @@
+{
+  "id": "nano_selector_7e_1h",
+  "version": 2,
+  "name": "Nano Selector 7E 1H",
+  "inherits": "fdmprinter",
+  "metadata": {
+    "visible": true,
+    "author": "Maximillian",
+    "manufacturer": "Custom"
+  },
+  "overrides": {
+    "machine_extruder_count": { "default_value": 7 },
+    "machine_heated_bed": { "default_value": false },
+    "machine_nozzle_size": { "default_value": 0.4 },
+    "machine_gcode_flavor": { "default_value": "Marlin" }
+  }
+}
