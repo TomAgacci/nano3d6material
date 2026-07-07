@@ -1,0 +1,19 @@
+// in gcode.c
+extern float flow_factor[];
+
+void process_extended_gcode(char *line) {
+
+    if (starts_with(line, "M700")) {  // set flow for current tool
+        float f = parse_S(line);      // M700 S1.05
+        flow_factor[current_tool] = f;
+        return;
+    }
+
+    if (starts_with(line, "M701")) {  // report flow
+        float f = flow_factor[current_tool];
+        report_flow(current_tool, f); // send over serial
+        return;
+    }
+
+    // existing T/M104/M109/E handling...
+}
