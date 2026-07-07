@@ -1,0 +1,16 @@
+void end_extrude() {
+    unsigned long e_end = micros();
+    unsigned long dt = e_end - e_start;
+
+    float duration_mm = (float)dt * 0.00001f;
+    float load_mm     = read_motor_load();
+    float encoder_mm  = encoder_ticks * ticks_to_mm;
+
+    // hybrid: weight encoder highest
+    measured_e = 0.6f * encoder_mm + 0.2f * duration_mm + 0.2f * load_mm;
+
+    if (measured_e > 0.0f)
+        flow_factor[current_tool] = requested_e / measured_e;
+
+    encoder_ticks = 0;
+}
