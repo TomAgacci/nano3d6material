@@ -1,0 +1,12 @@
+flow_factor[tool] = requested_e / measured_e
+Applied during planning:
+corrected_e = requested_e * flow_factor[tool]
+
+## Calibration G‑Codes
+- `M700 Sx.xx` → set flow factor
+- `M701` → report flow factor
+- `M702` → auto‑calibrate tool
+- `M703` → save flow factors to EEPROM
+
+## EEPROM
+Flow factors persist across reboots.
