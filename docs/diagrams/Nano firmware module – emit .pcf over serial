@@ -1,0 +1,71 @@
+// nano_pcf_emitter.c
+#include <Arduino.h>
+
+void emit_pcf_header() {
+  Serial.println(F("PCFv1"));
+  Serial.println(F("DIAGRAM_COUNT=4"));
+}
+
+void emit_diagram(const char *name, const int *pulses, int npulses, const char *payload) {
+  Serial.print(F("BEGIN_DIAGRAM "));
+  Serial.println(name);
+  for (int i = 0; i < npulses; i++) {
+    Serial.print(F("PULSE:"));
+    Serial.println(pulses[i]);
+  }
+  Serial.println(F("PAYLOAD_START"));
+  Serial.println(payload);
+  Serial.println(F("PAYLOAD_END"));
+}
+
+void emit_pcf_footer() {
+  Serial.println(F("CHECKSUM=0xA55F"));
+  Serial.println(F("END_PCF"));
+}
+
+void emit_all_diagrams() {
+  emit_pcf_header();
+
+  const int pulses_block[] = {20,40,60,80};
+  const char *payload_block =
+    "tama:quant {\n"
+    "  node \"Slicer\" {type:source; outputs:GCODE}\n"
+    "  node \"Nano MCU\" {type:processor; inputs:GCODE; outputs:STEP_DIR, SELECT, HEAT}\n"
+    "}\n";
+
+  emit_diagram("block-diagram-nano-selector.png", pulses_block, 4, payload_block);
+
+  const int pulses_wiring[] = {30,50,70};
+  const char *payload_wiring =
+    "tama:quant {\n"
+    "  node \"Arduino Nano\" {type:controller; outputs:X_STEP, X_DIR}\n"
+    "}\n";
+
+  emit_diagram("wiring-diagram-cnc-shields.png", pulses_wiring, 3, payload_wiring);
+
+  const int pulses_flow[] = {25,45,65};
+  const char *payload_flow =
+    "tama:quant {\n"
+    "  node \"Requested Extrusion\" {type:input; outputs:E_cmd}\n"
+    "}\n";
+
+  emit_diagram("flow-correction-loop.png", pulses_flow, 3, payload_flow);
+
+  const int pulses_slicer[] = {35,55,75};
+  const char *payload_slicer =
+    "tama:quant {\n"
+    "  node \"STL Model\" {type:source; outputs:MODEL}\n"
+    "}\n";
+
+  emit_diagram("slicer-toolchain.png", pulses_slicer, 3, payload_slicer);
+
+  emit_pcf_footer();
+}
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial) {}
+  emit_all_diagrams();
+}
+
+void loop() {}
