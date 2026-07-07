@@ -1,5 +1,36 @@
 License Under Creative Commons Attribution Open Source
 
+nano-selector-grbl/
+├─ README.md
+├─ LICENSE
+├─ docs/
+│  ├─ architecture.md
+│  ├─ wiring-nano-cnc-shields.md
+│  ├─ selector-logic.md
+│  ├─ flow-correction.md
+│  └─ diagrams/
+│     ├─ block-diagram-nano-selector.png
+│     ├─ wiring-diagram-cnc-shields.png
+│     ├─ selector-decoder-74hc138.png
+│     ├─ flow-correction-loop.png
+│     └─ slicer-toolchain.png
+├─ src/
+│  ├─ grbl_nano_selector.ino
+│  ├─ config.h
+│  ├─ cpu_map.h
+│  ├─ defaults.h
+│  ├─ system.c
+│  ├─ gcode.c
+│  ├─ planner.c
+│  ├─ heater.c
+│  ├─ selector.c
+│  ├─ flow.c
+│  └─ eeprom.c
+└─ slicer-profiles/
+   ├─ prusaslicer-nano-selector.ini
+   └─ cura-nano-selector.json
+
+
 The seventh tool motor is for direct drive 6 color addition or single direct drive basic
 
 Nano‑Selector GRBL Firmware
