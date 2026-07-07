@@ -1,0 +1,9 @@
+float read_motor_load() {
+    int raw = analogRead(A5);  // current sensor input
+    return (float)raw * load_scale;
+}
+
+void end_extrude() {
+    measured_e = read_motor_load();
+    flow_factor[current_tool] = requested_e / measured_e;
+}
