@@ -1,0 +1,7 @@
+#define CURRENT_PIN A5
+float load_scale = 0.001f; // tune
+
+float read_motor_load() {
+    int raw = analogRead(CURRENT_PIN);
+    return (float)raw * load_scale;
+}
