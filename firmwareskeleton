@@ -1,0 +1,48 @@
+// Pin map (Nano)
+#define PIN_X_STEP 2
+#define PIN_X_DIR  5
+#define PIN_Y_STEP 3
+#define PIN_Y_DIR  6
+#define PIN_Z_STEP 4
+#define PIN_Z_DIR  7
+
+#define PIN_E_STEP 9
+#define PIN_E_DIR  8
+
+#define PIN_SEL0   10
+#define PIN_SEL1   11
+#define PIN_SEL2   12
+
+#define PIN_HEATER 13
+#define PIN_THERM  A0
+
+uint8_t current_tool = 0;
+
+void set_selector(uint8_t tool) {
+    if (tool > 6) tool = 0;
+    digitalWrite(PIN_SEL0, tool & 0x01);
+    digitalWrite(PIN_SEL1, (tool >> 1) & 0x01);
+    digitalWrite(PIN_SEL2, (tool >> 2) & 0x01);
+}
+
+void process_gcode_line(char *line) {
+    if (line[0] == 'T') {
+        int t = atoi(line + 1);   // T0–T6
+        current_tool = t;
+        set_selector(current_tool);
+        return;
+    }
+
+    // handle E moves
+    if (strchr(line, 'E')) {
+        float e = parse_E(line);  // your parser
+        plan_extruder_move(e);    // add to GRBL planner as extra axis
+    }
+
+    // pass X/Y/Z/F/etc. to normal GRBL parser
+    grbl_process_line(line);
+}
+
+// In stepper ISR, just treat E like a normal axis:
+// when planner says "step E", toggle PIN_E_STEP/PIN_E_DIR.
+// Selector ensures only one driver is enabled.
