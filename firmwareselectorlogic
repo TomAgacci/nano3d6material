@@ -1,0 +1,26 @@
+uint8_t current_tool = 0;
+
+void set_selector(uint8_t tool) {
+    // constrain 0–6
+    tool = (tool > 6) ? 0 : tool;
+
+    // bits on D10, D11, D12
+    digitalWrite(10, tool & 0x01);
+    digitalWrite(11, (tool >> 1) & 0x01);
+    digitalWrite(12, (tool >> 2) & 0x01);
+}
+
+void process_gcode_line(char *line) {
+    if (starts_with_T(line)) {
+        int t = parse_T(line);   // T0–T6
+        current_tool = t;
+        set_selector(current_tool);
+    }
+
+    if (has_E_move(line)) {
+        float e = parse_E(line);
+        plan_extruder_move(e);   // normal GRBL-style axis planning
+    }
+
+    // X/Y/Z, F, etc. → normal GRBL handling
+}
