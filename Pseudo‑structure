@@ -1,0 +1,31 @@
+// Globals
+uint8_t current_tool = 0;
+
+void process_gcode_line(char *line) {
+    if (starts_with(line, "T")) {
+        int t = parse_int_after_T(line);
+        current_tool = constrain(t, 0, 5);
+        set_selector_outputs(current_tool);
+    }
+
+    if (has_E_move(line)) {
+        float e = parse_E(line);
+        plan_extruder_move(e);
+    }
+
+    // X/Y/Z, F, etc. → normal GRBL planning
+}
+
+void set_selector_outputs(uint8_t tool) {
+    // Example: 3 bits for 6 tools
+    // D4, D5, D6 as selector lines
+    digitalWrite(4, tool & 0x01);
+    digitalWrite(5, (tool >> 1) & 0x01);
+    digitalWrite(6, (tool >> 2) & 0x01);
+}
+
+void plan_extruder_move(float e) {
+    // Convert mm to steps
+    long steps = (long)(e * EXTRUDER_STEPS_PER_MM);
+    // Add to GRBL planner as "A axis" or dedicated extruder axis
+}
