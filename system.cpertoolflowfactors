@@ -1,0 +1,4 @@
+#define NUM_TOOLS 7
+
+float flow_factor[NUM_TOOLS] = {1,1,1,1,1,1,1};
+uint8_t current_tool = 0;
