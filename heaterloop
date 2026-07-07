@@ -1,0 +1,11 @@
+float target_temp = 0;
+
+void set_target_temp(float t) { target_temp = t; }
+
+void heater_loop() {
+    int raw = analogRead(PIN_THERM);
+    float temp = thermistor_to_celsius(raw); // your function
+
+    if (temp < target_temp - 2) digitalWrite(PIN_HEATER, HIGH);
+    else if (temp > target_temp + 2) digitalWrite(PIN_HEATER, LOW);
+}
