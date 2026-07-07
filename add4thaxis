@@ -1,0 +1,4 @@
+void plan_extruder_move(float e) {
+    float steps = e * EXTRUDER_STEPS_PER_MM;
+    plan_buffer_line(current_x, current_y, current_z, steps, current_feedrate);
+}
