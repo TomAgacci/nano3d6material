@@ -1,0 +1,12 @@
+void end_extrude() {
+    unsigned long e_end = micros();
+    unsigned long dt = e_end - e_start;
+
+    float duration_mm = (float)dt * 0.00001f;   // your existing duration proxy
+    float load_mm     = read_motor_load();      // current-based proxy
+
+    measured_e = 0.5f * duration_mm + 0.5f * load_mm;  // hybrid
+
+    if (measured_e > 0.0f)
+        flow_factor[current_tool] = requested_e / measured_e;
+}
