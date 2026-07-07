@@ -1,0 +1,15 @@
+float target_temp = 0;
+
+bool temp_reached() {
+    int raw = analogRead(THERMISTOR_PIN);
+    float t = thermistor_to_celsius(raw);
+    return (t >= target_temp - 1);
+}
+
+void heater_loop() {
+    int raw = analogRead(THERMISTOR_PIN);
+    float t = thermistor_to_celsius(raw);
+
+    if (t < target_temp - 2) digitalWrite(HEATER_PIN, HIGH);
+    else if (t > target_temp + 2) digitalWrite(HEATER_PIN, LOW);
+}
