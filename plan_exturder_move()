@@ -1,0 +1,5 @@
+void plan_extruder_move(float e) {
+    float corrected = e * flow_factor;
+    float steps = corrected * DEFAULT_E_STEPS_PER_MM;
+    plan_buffer_line(current_x, current_y, current_z, steps, current_feedrate);
+}
