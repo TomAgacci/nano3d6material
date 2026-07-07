@@ -1,0 +1,22 @@
+// Example constants for a typical 100k NTC
+#define THERMISTOR_NOMINAL 100000.0   // 100k at 25°C
+#define TEMPERATURE_NOMINAL 25.0      // 25°C
+#define B_COEFFICIENT 3950.0          // Beta value
+#define SERIES_RESISTOR 100000.0      // 100k pull-up
+
+float thermistor_to_celsius(int raw) {
+    // Convert ADC reading to resistance
+    float v = (float)raw / 1023.0;
+    float r = SERIES_RESISTOR * (1.0 / v - 1.0);
+
+    // Beta equation
+    float steinhart;
+    steinhart = r / THERMISTOR_NOMINAL;      // (R/R0)
+    steinhart = log(steinhart);              // ln(R/R0)
+    steinhart /= B_COEFFICIENT;              // 1/B * ln(R/R0)
+    steinhart += 1.0 / (TEMPERATURE_NOMINAL + 273.15); // + 1/T0
+    steinhart = 1.0 / steinhart;             // invert
+    steinhart -= 273.15;                     // K → °C
+
+    return steinhart;
+}
