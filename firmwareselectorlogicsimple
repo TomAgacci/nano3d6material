@@ -1,0 +1,24 @@
+uint8_t current_tool = 0;
+
+void set_selector(uint8_t tool) {
+    if (tool > 6) tool = 0;  // clamp
+
+    digitalWrite(10, tool & 0x01);        // SEL0
+    digitalWrite(11, (tool >> 1) & 0x01); // SEL1
+    digitalWrite(12, (tool >> 2) & 0x01); // SEL2
+}
+
+void process_gcode_line(char *line) {
+    if (starts_with_T(line)) {
+        int t = parse_T(line);   // T0–T6
+        current_tool = t;
+        set_selector(current_tool);
+    }
+
+    if (has_E_move(line)) {
+        float e = parse_E(line);
+        plan_extruder_move(e);   // normal single extruder axis
+    }
+
+    // X/Y/Z, F, etc. → normal GRBL handling
+}
