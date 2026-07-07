@@ -1,0 +1,2 @@
+measured_e = (duration_mm * 0.5f) + (load_mm * 0.5f);
+flow_factor[current_tool] = requested_e / measured_e;
