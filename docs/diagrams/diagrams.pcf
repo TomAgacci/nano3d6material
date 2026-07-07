@@ -1,0 +1,78 @@
+PCFv1
+DIAGRAM_COUNT=4
+
+BEGIN_DIAGRAM block-diagram-nano-selector.png
+PULSE:20
+PULSE:40
+PULSE:60
+PULSE:80
+PAYLOAD_START
+tama:quant {
+  node "Slicer" {type:source; outputs:GCODE}
+  node "Nano MCU" {type:processor; inputs:GCODE; outputs:STEP_DIR, SELECT, HEAT}
+  node "Selector 74HC138" {type:decoder; inputs:SELECT; outputs:EN0..EN6}
+  node "CNC Shield #1" {type:driver; inputs:STEP_DIR, EN0}
+  node "CNC Shield #2" {type:driver_array; inputs:STEP_DIR, EN1..EN6}
+  node "Hotend" {type:actuator; inputs:HEAT}
+  flow Slicer -> Nano MCU
+  flow Nano MCU.SELECT -> Selector 74HC138
+  flow Selector 74HC138.EN0 -> CNC Shield #1
+  flow Selector 74HC138.EN1..EN6 -> CNC Shield #2
+  flow Nano MCU.HEAT -> Hotend
+}
+PAYLOAD_END
+
+BEGIN_DIAGRAM wiring-diagram-cnc-shields.png
+PULSE:30
+PULSE:50
+PULSE:70
+PAYLOAD_START
+tama:quant {
+  node "Arduino Nano" {type:controller; outputs:X_STEP, X_DIR, Y_STEP, Y_DIR, Z_STEP, Z_DIR, E_STEP, E_DIR, SEL0, SEL1, SEL2}
+  node "CNC Shield #1" {type:driver_board; inputs:X_STEP, X_DIR, Y_STEP, Y_DIR, Z_STEP, Z_DIR, E_STEP, E_DIR, EN0}
+  node "CNC Shield #2" {type:driver_board_array; inputs:E_STEP, E_DIR, EN1..EN6}
+  node "74HC138 Selector" {type:decoder; inputs:SEL0, SEL1, SEL2; outputs:EN0..EN6}
+  flow Arduino Nano.SEL0 -> 74HC138 Selector
+  flow 74HC138 Selector.EN0 -> CNC Shield #1
+  flow 74HC138 Selector.EN1..EN6 -> CNC Shield #2
+}
+PAYLOAD_END
+
+BEGIN_DIAGRAM flow-correction-loop.png
+PULSE:25
+PULSE:45
+PULSE:65
+PAYLOAD_START
+tama:quant {
+  node "Requested Extrusion" {type:input; outputs:E_cmd}
+  node "Measurement Engine" {type:sensor_array; outputs:measured_e}
+  node "Flow Factor Update" {type:processor; inputs:E_cmd, measured_e; outputs:flow_factor}
+  node "Corrected Extrusion" {type:processor; inputs:E_cmd, flow_factor; outputs:E_corrected}
+  flow Requested Extrusion.E_cmd -> Corrected Extrusion
+  flow Measurement Engine.measured_e -> Flow Factor Update
+  flow Flow Factor Update.flow_factor -> Corrected Extrusion
+}
+PAYLOAD_END
+
+BEGIN_DIAGRAM slicer-toolchain.png
+PULSE:35
+PULSE:55
+PULSE:75
+PAYLOAD_START
+tama:quant {
+  node "STL Model" {type:source; outputs:MODEL}
+  node "Slicer" {type:processor; inputs:MODEL; outputs:GCODE}
+  node "Nano MCU" {type:controller; inputs:GCODE; outputs:STEP_DIR, SELECT, HEAT}
+  node "Selector" {type:decoder; inputs:SELECT; outputs:EN0..EN6}
+  node "Extruder Drivers" {type:driver_array; inputs:STEP_DIR, EN0..EN6}
+  node "Hotend" {type:actuator; inputs:HEAT}
+  flow STL Model.MODEL -> Slicer
+  flow Slicer.GCODE -> Nano MCU
+  flow Nano MCU.SELECT -> Selector
+  flow Selector.EN0..EN6 -> Extruder Drivers
+  flow Nano MCU.HEAT -> Hotend
+}
+PAYLOAD_END
+
+CHECKSUM=0xA55F
+END_PCF
