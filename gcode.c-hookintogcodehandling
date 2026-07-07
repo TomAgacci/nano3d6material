@@ -1,0 +1,23 @@
+extern float requested_e;
+void begin_extrude();
+void end_extrude();
+
+void process_extended_gcode(char *line) {
+
+    if (line[0] == 'T') {
+        int t = atoi(line + 1);
+        current_tool = (t > 6) ? 0 : t;
+        selector_set(current_tool);
+        return;
+    }
+
+    if (strchr(line, 'E')) {
+        requested_e = parse_E(line);
+        begin_extrude();
+        plan_extruder_move(requested_e);
+        end_extrude();
+        return;
+    }
+
+    // M104/M109 etc. as before...
+}
