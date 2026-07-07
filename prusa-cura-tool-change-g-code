@@ -1,0 +1,17 @@
+; Tool change [current_extruder] -> [next_extruder]
+
+; 1. retract old filament a bit
+G1 E-3 F1800
+
+; 2. select new tool (Nano firmware: Tn -> selector bits)
+T[next_extruder]
+
+; 3. wait for selector to settle
+G4 P300
+
+; 4. purge new filament
+G1 E6 F1800
+
+; 5. optional wipe move
+G1 X[current_position_x+5] F3000
+G1 X[current_position_x-5] F3000
