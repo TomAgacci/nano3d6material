@@ -1,0 +1,10 @@
+[Diagram Description]
+
+Shows:
+Requested E → planner → motion  
+↓  
+Measurement block: duration, current, encoder  
+↓  
+Flow factor update  
+↓  
+Corrected E applied to next move
