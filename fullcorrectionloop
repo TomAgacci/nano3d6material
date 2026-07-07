@@ -1,0 +1,19 @@
+float flow_factor = 1.0;
+float requested_e = 0.0;
+float measured_e = 0.0;
+
+void process_extended_gcode(char *line) {
+
+    if (strchr(line, 'E')) {
+        requested_e = parse_E(line);
+
+        begin_extrude();               // start timing or sensor sampling
+        plan_extruder_move(requested_e);
+        end_extrude();                 // stop timing or sensor sampling
+
+        // compute correction
+        if (measured_e > 0.0) {
+            flow_factor = requested_e / measured_e;
+        }
+    }
+}
