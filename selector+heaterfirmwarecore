@@ -1,0 +1,37 @@
+#include "cpu_map.h"
+
+uint8_t current_tool = 0;
+float target_temp = 0.0;
+
+void selector_set(uint8_t tool) {
+  if (tool > 6) tool = 0;
+  digitalWrite(SEL0_PIN, tool & 0x01);
+  digitalWrite(SEL1_PIN, (tool >> 1) & 0x01);
+  digitalWrite(SEL2_PIN, (tool >> 2) & 0x01);
+}
+
+float thermistor_to_celsius(int raw) {
+  // placeholder: linear approx
+  return (float)raw * 0.1f;
+}
+
+bool temp_reached() {
+  int raw = analogRead(THERMISTOR_PIN);
+  float t = thermistor_to_celsius(raw);
+  return (t >= target_temp - 1.0f);
+}
+
+void heater_loop() {
+  int raw = analogRead(THERMISTOR_PIN);
+  float t = thermistor_to_celsius(raw);
+
+  if (t < target_temp - 2.0f) digitalWrite(HEATER_PIN, HIGH);
+  else if (t > target_temp + 2.0f) digitalWrite(HEATER_PIN, LOW);
+}
+
+void protocol_main_loop() {
+  for (;;) {
+    protocol_execute_realtime();
+    heater_loop();
+  }
+}
