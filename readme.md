@@ -1,5 +1,8 @@
 License Under Creative Commons Attribution Open Source
 
+Here's the reprap compatible 6 color addon for bowden for the project:
+www.thingiverse.com/thing:2801393
+
 nano-selector-grbl/
 ├─ README.md
 ├─ LICENSE
