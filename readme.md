@@ -10,36 +10,36 @@ www.thingiverse.com/Gremble/collections/39468905/things<br>
 Please Support the repository. Here's a link to cnc v3 shields.
 https://amzn.to/4wuNUS6
 
-nano-selector-grbl/
-├─ README.md
-├─ LICENSE
-├─ docs/
-│  ├─ architecture.md
-│  ├─ wiring-nano-cnc-shields.md
-│  ├─ selector-logic.md
-│  ├─ flow-correction.md
-│  └─ diagrams/
-│     ├─ block-diagram-nano-selector.png
-│     ├─ wiring-diagram-cnc-shields.png
-│     ├─ selector-decoder-74hc138.png
-│     ├─ flow-correction-loop.png
-│     └─ slicer-toolchain.png
-├─ src/
-│  ├─ grbl_nano_selector.ino
-│  ├─ config.h
-│  ├─ cpu_map.h
-│  ├─ defaults.h
-│  ├─ system.c
-│  ├─ gcode.c
-│  ├─ planner.c
-│  ├─ heater.c
-│  ├─ selector.c
-│  ├─ flow.c
-│  └─ eeprom.c
-└─ slicer-profiles/
-   ├─ prusaslicer-nano-selector.ini
-   └─ cura-nano-selector.json
-
+nano-selector-grbl/<br>
+├─ README.md<br>
+├─ LICENSE<br>
+├─ docs/<br>
+│  ├─ architecture.md<br>
+│  ├─ wiring-nano-cnc-shields.md<br>
+│  ├─ selector-logic.md<br>
+│  ├─ flow-correction.md<br>
+│  └─ diagrams/<br>
+│     ├─ block-diagram-nano-selector.png<br>
+│     ├─ wiring-diagram-cnc-shields.png<br>
+│     ├─ selector-decoder-74hc138.png<br>
+│     ├─ flow-correction-loop.png<br>
+│     └─ slicer-toolchain.png<br>
+├─ src/<br>
+│  ├─ grbl_nano_selector.ino<br>
+│  ├─ config.h<br>
+│  ├─ cpu_map.h<br>
+│  ├─ defaults.h<br>
+│  ├─ system.c<br>
+│  ├─ gcode.c<br>
+│  ├─ planner.c<br>
+│  ├─ heater.c<br>
+│  ├─ selector.c<br>
+│  ├─ flow.c<br>
+│  └─ eeprom.c<br>
+└─ slicer-profiles/<br>
+   ├─ prusaslicer-nano-selector.ini<br>
+   └─ cura-nano-selector.json<br>
+<br>
 
 The seventh tool motor is for direct drive 6 color addition or single direct drive basic
 
