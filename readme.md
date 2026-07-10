@@ -9,6 +9,8 @@ www.thingiverse.com/Gremble/collections/39468905/things<br>
 
 Please Support the repository. Here's a link to cnc v3 shields.
 https://amzn.to/4wuNUS6
+v4 shields
+https://amzn.to/4wBw283
 
 nano-selector-grbl/<br>
 ├─ README.md<br>
