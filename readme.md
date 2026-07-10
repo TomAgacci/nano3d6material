@@ -1,11 +1,14 @@
 License Under Creative Commons Attribution Open Source
 
-Here's the reprap compatible 6 material addon for bowden, for the project:
-www.thingiverse.com/thing:2801393
-Here's the compatible files
-www.thingiverse.com/Gremble/collections/11229688/things
-Here's the CNC Parts and templates
-www.thingiverse.com/Gremble/collections/39468905/things
+Here's the reprap compatible 6 material addon for bowden, for the project:<br>
+www.thingiverse.com/thing:2801393<br>
+Here's the compatible files<br>
+www.thingiverse.com/Gremble/collections/11229688/things<br>
+Here's the CNC Parts and templates<br>
+www.thingiverse.com/Gremble/collections/39468905/things<br>
+
+Please Support the repository. Here's a link to cnc v3 shields.
+https://amzn.to/4wuNUS6
 
 nano-selector-grbl/
 ├─ README.md
