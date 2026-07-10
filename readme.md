@@ -7,7 +7,7 @@ www.thingiverse.com/Gremble/collections/11229688/things<br>
 Here's the CNC Parts and templates<br>
 www.thingiverse.com/Gremble/collections/39468905/things<br>
 
-Please Support the repository. Here's a link to cnc v3 shields.
+Please Support the repository. Here's links to cnc v3 shields.
 https://amzn.to/4wuNUS6
 v4 shields
 https://amzn.to/4wBw283
