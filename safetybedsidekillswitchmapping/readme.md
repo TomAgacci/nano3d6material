@@ -12,3 +12,13 @@ Placement:
 Any hand reaching in to grab/move the printhead naturally hits one.
 
 Wire them all back to the Nano with strain relief; keep them clear of moving axes.
+
+git apply killring.patch
+
+Defines kill‑ring pins (6 switches, all conflict‑free).
+
+Adds kill init + poll + emergency stop latch.
+
+Wires kill polling into the main loop.
+
+Adds M810 (status) and M811 (clear latch) G‑codes.
