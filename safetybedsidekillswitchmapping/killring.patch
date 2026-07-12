@@ -1,0 +1,238 @@
+diff --git a/cpu_map.h b/cpu_map.h
+index 1234567..89abcde 100644
+--- a/cpu_map.h
++++ b/cpu_map.h
+@@ -1,3 +1,4 @@
++// nano3d6material CPU map with kill-ring pins
+ #ifndef cpu_map_h
+ #define cpu_map_h
+ 
+@@ -40,6 +41,22 @@
+ // Existing pin definitions for X/Y/Z, extruder, selector, heater, thermistor, endstops...
+ // (unchanged)
+ 
++// ---------------------------------------------------------------------------
++// Kill-ring safety switches
++// ---------------------------------------------------------------------------
++// We use only pins that are not mapped elsewhere in nano3d6material:
++//  - A4 (PC4)  : free (I2C SDA if unused)
++//  - A5 (PC5)  : free (I2C SCL if unused)
++//  - D0 (PD0)  : serial RX (safe during print if host not streaming)
++//  - D1 (PD1)  : serial TX (same caveat)
++//  - A6 (ADC6) : analog-only input, perfect for switch
++//  - A7 (ADC7) : analog-only input, perfect for switch
++
++#define KILL0_PIN   A4
++#define KILL1_PIN   A5
++#define KILL2_PIN   0    // D0
++#define KILL3_PIN   1    // D1
++#define KILL4_PIN   A6
++#define KILL5_PIN   A7
+ 
+ #endif // cpu_map_h
+diff --git a/system.h b/system.h
+index 2345678..9abcdea 100644
+--- a/system.h
++++ b/system.h
+@@ -10,6 +10,11 @@
+ void system_init(void);
+ void system_reset(void);
+ 
++// Kill-ring safety API
++void kill_init(void);
++void kill_poll(void);
++uint8_t kill_triggered(void);
++void kill_clear_latch(void);
+ 
+ #endif
+diff --git a/system.c b/system.c
+index 3456789..abcde90 100644
+--- a/system.c
++++ b/system.c
+@@ -1,6 +1,7 @@
+ #include "system.h"
+ #include "cpu_map.h"
+ #include "planner.h"
++#include "report.h"
+ #include "heater.h"
+ #include "grbl.h"
+ 
+@@ -12,6 +13,55 @@
+ // Existing system state, init, reset, etc.
+ // ---------------------------------------------------------------------------
+ 
++// ---------------------------------------------------------------------------
++// Kill-ring safety implementation
++// ---------------------------------------------------------------------------
++
++static const uint8_t kill_pins[] = {
++    KILL0_PIN, KILL1_PIN, KILL2_PIN,
++    KILL3_PIN, KILL4_PIN, KILL5_PIN
++};
++
++static volatile uint8_t kill_latched = 0;
++
++void kill_init(void)
++{
++    for (uint8_t i = 0; i < sizeof(kill_pins); i++) {
++        pinMode(kill_pins[i], INPUT_PULLUP);
++    }
++}
++
++uint8_t kill_triggered(void)
++{
++    for (uint8_t i = 0; i < sizeof(kill_pins); i++) {
++        if (digitalRead(kill_pins[i]) == LOW) {
++            return 1;
++        }
++    }
++    return 0;
++}
++
++static void kill_emergency_stop(void)
++{
++    kill_latched = 1;
++
++    // Stop motion
++    planner_kill_all_motions();
++    st_go_idle();
++
++    // Disable heaters
++    heater_disable_all();
++
++    // Put GRBL into alarm state
++    sys.state = STATE_ALARM;
++    report_alarm_message(ALARM_HARD_LIMIT);
++}
++
++void kill_poll(void)
++{
++    if (kill_latched) return;
++    if (kill_triggered()) kill_emergency_stop();
++}
++
+ void system_init(void)
+ {
+     // Existing init code...
+@@ -19,6 +69,9 @@ void system_init(void)
+     // planner_init();
+     // heater_init();
+ 
++    // Initialize kill-ring pins
++    kill_init();
++
+     // ...
+ }
+ 
+@@ -26,6 +79,18 @@ void system_reset(void)
+ {
+     // Existing reset logic...
+     // sys.state = STATE_IDLE;
++
++    // Clear kill latch only if all switches are released
++    kill_clear_latch();
++}
++
++void kill_clear_latch(void)
++{
++    if (!kill_triggered()) {
++        kill_latched = 0;
++        if (sys.state == STATE_ALARM) {
++            sys.state = STATE_IDLE;
++        }
++    }
+ }
+diff --git a/gcode.h b/gcode.h
+index 4567890..bcdef01 100644
+--- a/gcode.h
++++ b/gcode.h
+@@ -20,6 +20,9 @@ void gcode_execute_line(char *line);
+ 
+ // Existing G-code handlers...
+ 
++void gcode_M810(void); // report kill-ring status
++void gcode_M811(void); // clear kill latch (if safe)
++
+ #endif
+diff --git a/gcode.c b/gcode.c
+index 5678901..cdef012 100644
+--- a/gcode.c
++++ b/gcode.c
+@@ -1,6 +1,8 @@
+ #include "gcode.h"
+ #include "system.h"
+ #include "report.h"
++#include "grbl.h"
++
+ // Existing includes...
+ 
+ void gcode_execute_line(char *line)
+@@ -45,6 +47,14 @@ void gcode_execute_line(char *line)
+         case 104:
+             gcode_M104(); // example: set hotend temp
+             break;
++        case 810:
++            gcode_M810();
++            break;
++        case 811:
++            gcode_M811();
++            break;
++
+         // other M-codes...
+@@ -120,3 +130,35 @@ void gcode_M104(void)
+     // existing implementation...
+ }
++
++// ---------------------------------------------------------------------------
++// M810: report kill-ring status
++// ---------------------------------------------------------------------------
++
++void gcode_M810(void)
++{
++    uint8_t active = kill_triggered();
++    if (active) {
++        report_message("KILL-RING: TRIGGERED");
++    } else {
++        report_message("KILL-RING: OK");
++    }
++}
++
++// ---------------------------------------------------------------------------
++// M811: clear kill latch (only if all switches released)
++// ---------------------------------------------------------------------------
++
++void gcode_M811(void)
++{
++    if (kill_triggered()) {
++        report_message("KILL-RING: STILL ACTIVE");
++        return;
++    }
++
++    kill_clear_latch();
++
++    if (sys.state == STATE_IDLE) {
++        report_message("KILL-RING: CLEARED");
++    } else {
++        report_message("KILL-RING: ALARM STILL SET");
++    }
++}
+diff --git a/grbl_nano3d6material.ino b/grbl_nano3d6material.ino
+index 6789012..def0123 100644
+--- a/grbl_nano3d6material.ino
++++ b/grbl_nano3d6material.ino
+@@ -20,6 +20,7 @@ void setup()
+     system_init();
+     // other init: planner_init(), heater_init(), etc.
+ }
+@@ -30,6 +31,11 @@ void loop()
+ {
+     // Existing GRBL protocol main loop
+     protocol_execute_runtime();
++
++    // Heater / flow loops
++    heater_loop();
++    flow_correction_loop();
++
++    // Kill-ring safety poll
++    kill_poll();
+ }
