@@ -1,0 +1,4 @@
+4. Reset behavior
+You want the printer to stay dead until someone explicitly resets it and all f‑stops are released.
+
+Add a function to clear the kill state, called only on a GRBL reset (e.g. soft_reset or hardware reset):
