@@ -1,0 +1,23 @@
+M810 (kill‑ring status)
+
+void gcode_M810(void)
+{
+    uint8_t active = kill_triggered();
+    report_message(active ? "KILL-RING: TRIGGERED" : "KILL-RING: OK");
+}
+
+Add to your G‑code dispatch table:
+case 810:
+    gcode_M810();
+    break;
+
+Now you can test the ring anytime:
+M810
+
+Output:
+
+KILL-RING: OK
+
+or:
+
+KILL-RING: TRIGGERED
