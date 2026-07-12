@@ -1,0 +1,11 @@
+Optional: M811 to clear kill latch
+
+void gcode_M811(void)
+{
+    if (!kill_triggered()) {
+        kill_latched = 0;
+        report_message("KILL-RING: CLEARED");
+    } else {
+        report_message("KILL-RING: STILL ACTIVE");
+    }
+}
