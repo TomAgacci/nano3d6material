@@ -1,0 +1,31 @@
+static const uint8_t kill_pins[] = {
+    KILL0_PIN, KILL1_PIN, KILL2_PIN,
+    KILL3_PIN, KILL4_PIN, KILL5_PIN
+};
+
+static volatile uint8_t kill_latched = 0;
+
+void kill_init(void)
+{
+    for (uint8_t i = 0; i < sizeof(kill_pins); i++) {
+        pinMode(kill_pins[i], INPUT_PULLUP);
+    }
+}
+
+static uint8_t kill_triggered(void)
+{
+    for (uint8_t i = 0; i < sizeof(kill_pins); i++) {
+        if (digitalRead(kill_pins[i]) == LOW) return 1;
+    }
+    return 0;
+}
+
+void kill_poll(void)
+{
+    if (kill_latched) return;
+
+    if (kill_triggered()) {
+        kill_latched = 1;
+        emergency_stop();
+    }
+}
