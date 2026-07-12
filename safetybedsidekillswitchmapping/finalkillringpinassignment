@@ -1,0 +1,8 @@
+#define KILL0_PIN   A4   // PC4
+#define KILL1_PIN   A5   // PC5
+#define KILL2_PIN   D0   // PD0
+#define KILL3_PIN   D1   // PD1
+#define KILL4_PIN   A6   // ADC6 (analog-only, input-only)
+#define KILL5_PIN   A7   // ADC7 (analog-only, input-only)
+#define KILL6_PIN   D14  // A0 as digital (if thermistor moved)
+#define KILL7_PIN   D15  // A1 as digital (if endstop moved)
