@@ -1,0 +1,22 @@
+#include "cpu_map.h"
+#include "config.h"
+#include "planner.h"
+#include "heater.h"
+
+#define NUM_KILL_SWITCHES 8
+
+static const uint8_t kill_pins[NUM_KILL_SWITCHES] = {
+    KILL0_PIN, KILL1_PIN, KILL2_PIN, KILL3_PIN,
+    KILL4_PIN, KILL5_PIN, KILL6_PIN, KILL7_PIN
+};
+
+static volatile uint8_t kill_latched = 0;
+
+static void kill_pins_init(void)
+{
+    for (uint8_t i = 0; i < NUM_KILL_SWITCHES; i++) {
+        // Configure as input with pull‑up
+        // On AVR: use DDRx, PORTx directly or helper macros
+        pinMode(kill_pins[i], INPUT_PULLUP); // if you have Arduino‑style macros
+    }
+}
