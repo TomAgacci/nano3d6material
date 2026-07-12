@@ -1,0 +1,8 @@
+Add kill‑ring to your firmware (drop‑in)
+
+#define KILL0_PIN   A4
+#define KILL1_PIN   A5
+#define KILL2_PIN   0   // D0
+#define KILL3_PIN   1   // D1
+#define KILL4_PIN   A6
+#define KILL5_PIN   A7
