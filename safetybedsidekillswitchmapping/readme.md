@@ -22,3 +22,5 @@ Adds kill init + poll + emergency stop latch.
 Wires kill polling into the main loop.
 
 Adds M810 (status) and M811 (clear latch) G‑codes.
+
+If you hit any compile errors (e.g. missing planner_kill_all_motions() or heater_disable_all() names differ in your tree), feel free to edit or post an issue.
