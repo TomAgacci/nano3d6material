@@ -1,3 +1,5 @@
+In system_init() or wherever pins are configured:
+
 #include "cpu_map.h"
 #include "config.h"
 #include "planner.h"
@@ -20,3 +22,5 @@ static void kill_pins_init(void)
         pinMode(kill_pins[i], INPUT_PULLUP); // if you have Arduino‑style macros
     }
 }
+
+Call kill_pins_init() from your main init (e.g. in system_init() or grbl_nano_selector.ino setup).
