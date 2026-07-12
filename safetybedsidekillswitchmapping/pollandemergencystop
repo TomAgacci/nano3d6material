@@ -1,0 +1,53 @@
+3. Polling and emergency stop
+Add a small polling function in system.c that runs frequently (e.g. from the main loop or a system tick):
+
+static uint8_t kill_switch_active(void)
+{
+    for (uint8_t i = 0; i < NUM_KILL_SWITCHES; i++) {
+        // Active‑low: pressed → 0
+        if (digitalRead(kill_pins[i]) == LOW) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+static void emergency_stop(void)
+{
+    // Latch
+    kill_latched = 1;
+
+    // Stop motion
+    planner_kill_all_motions();   // or equivalent in your fork
+    st_go_idle();                 // GRBL stepper idle
+
+    // Disable heaters
+    heater_disable_all();         // from heater.c
+
+    // Raise GRBL alarm state so host knows
+    sys.state = STATE_ALARM;      // GRBL system state
+    report_alarm_message(ALARM_HARD_LIMIT); // or custom code
+
+    // Optional: buzzer or LED
+    // buzzer_alert();
+}
+
+void system_safety_poll(void)
+{
+    static uint8_t debounce = 0;
+    const uint8_t DEBOUNCE_MAX = 5;
+
+    if (kill_latched) {
+        return; // already in fault
+    }
+
+    if (kill_switch_active()) {
+        if (debounce < DEBOUNCE_MAX) {
+            debounce++;
+        } else {
+            emergency_stop();
+        }
+    } else {
+        debounce = 0;
+    }
+}
