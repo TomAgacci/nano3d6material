@@ -1,0 +1,16 @@
+Then, in your main loop (e.g. in grbl_nano_selector.ino or system.c main run loop):
+
+void protocol_main_loop(void)
+{
+    for (;;) {
+        // Existing GRBL protocol handling
+        protocol_execute_runtime();
+
+        // Your heater loop, flow correction, etc.
+        heater_loop();
+        flow_correction_loop();
+
+        // New safety poll
+        system_safety_poll();
+    }
+}
