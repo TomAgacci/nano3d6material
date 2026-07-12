@@ -11,3 +11,13 @@ void system_clear_kill(void)
         sys.state = STATE_IDLE;
     }
 }
+
+Hook this into your reset path (e.g. in system_reset() or wherever GRBL handles CTRL‑X):
+
+void system_reset(void)
+{
+    // Existing GRBL reset logic
+    // ...
+
+    system_clear_kill();
+}
