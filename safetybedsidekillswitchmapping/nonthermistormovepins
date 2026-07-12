@@ -1,0 +1,6 @@
+#define KILL0_PIN   A4
+#define KILL1_PIN   A5
+#define KILL2_PIN   D0
+#define KILL3_PIN   D1
+#define KILL4_PIN   A6
+#define KILL5_PIN   A7
